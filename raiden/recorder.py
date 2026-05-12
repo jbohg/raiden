@@ -681,6 +681,7 @@ def run_recording(
     calibration_file: str = CALIBRATION_FILE,
     arms: str = "bimanual",
     data_dir: str = "data",
+    follower_home_pos: Optional[list] = None,
 ) -> None:
     """Run teleoperation with continuous demonstration recording.
 
@@ -764,6 +765,8 @@ def run_recording(
     use_right = arms == "bimanual"
     use_left = True
 
+    _home_pos_arr = np.array(follower_home_pos) if follower_home_pos is not None else None
+
     try:
         while True:
             recorder = None
@@ -774,6 +777,7 @@ def run_recording(
                 use_left_leader=interface.uses_leaders and use_left,
                 use_right_follower=use_right,
                 use_left_follower=use_left,
+                follower_home_pos=_home_pos_arr,
             )
             _active_ctrl[0] = robot_controller
 

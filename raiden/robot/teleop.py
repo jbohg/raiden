@@ -18,8 +18,16 @@ def run_bimanual_teleop(
     rot_scale: float = 3.0,
     invert_rotation: bool = False,
     arms: str = "bimanual",
+    oculus_right_controller: bool = True,
+    oculus_spatial_coeff: float = 1.0,
+    oculus_pos_action_gain: float = 1.0,
+    oculus_rot_action_gain: float = 1.0,
+    oculus_rmat_reorder: list | None = None,
+    follower_home_pos: list | None = None,
 ):
     """Run the bimanual teleoperation system"""
+
+    import numpy as np
 
     use_right = arms == "bimanual"
     use_left = True
@@ -31,6 +39,11 @@ def run_bimanual_teleop(
         vel_scale=vel_scale,
         rot_scale=rot_scale,
         invert_rotation=invert_rotation,
+        oculus_right_controller=oculus_right_controller,
+        oculus_spatial_coeff=oculus_spatial_coeff,
+        oculus_pos_action_gain=oculus_pos_action_gain,
+        oculus_rot_action_gain=oculus_rot_action_gain,
+        oculus_rmat_reorder=oculus_rmat_reorder,
     )
 
     robot_controller = RobotController(
@@ -38,6 +51,7 @@ def run_bimanual_teleop(
         use_left_leader=interface.uses_leaders and use_left,
         use_right_follower=use_right,
         use_left_follower=use_left,
+        follower_home_pos=np.array(follower_home_pos) if follower_home_pos is not None else None,
     )
 
     interface.open()
