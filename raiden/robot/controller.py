@@ -1428,6 +1428,7 @@ class RobotController:
         vr_to_global_mat: np.ndarray = np.eye(4)
         reset_orientation: bool = True  # continuously update until first grip press
         vr_origin_mat: Optional[np.ndarray] = None
+        raw_pose_origin: Optional[np.ndarray] = None
         robot_origin_T: Optional[np.ndarray] = None
         prev_grip: bool = False
 
@@ -1487,6 +1488,7 @@ class RobotController:
                 # --- grip rising-edge: latch origins ---
                 if grip and not prev_grip:
                     vr_origin_mat = vr_mat.copy()
+                    raw_pose_origin = raw_pose.copy()
                     robot_origin_T = _fk_tcp(q_arm).copy()
                 prev_grip = grip
 
@@ -1508,9 +1510,17 @@ class RobotController:
                 delta_pos = spatial_coeff * (vr_mat[:3, 3] - vr_origin_mat[:3, 3])
                 target_pos = robot_origin_T[:3, 3] + pos_action_gain * delta_pos
 
-                vr_origin_rot = vr_origin_mat[:3, :3]
-                vr_current_rot = vr_mat[:3, :3]
-                R_rel = vr_current_rot @ vr_origin_rot.T
+                # Compute R_rel in VR world frame (bypasses the vr_to_global body-frame
+                # wrapping that causes yaw/roll coupling when the controller is tilted
+                # at zero time), then project to robot world frame via P-conjugation.
+                # _R_fix swaps the VR X (wrist-roll) and VR Y (tilt) contributions so
+                # they land on the correct robot axes without disturbing the position
+                # mapping (which uses global_to_env_mat directly).
+                P = global_to_env_mat[:3, :3]
+                _R_fix = np.array([[0., 1., 0.], [-1., 0., 0.], [0., 0., 1.]])
+                P_rot = _R_fix @ P
+                R_delta_vr = raw_pose[:3, :3] @ raw_pose_origin[:3, :3].T
+                R_rel = P_rot @ R_delta_vr @ P_rot.T
                 angle_axis = Rotation.from_matrix(R_rel).as_rotvec() * rot_action_gain
                 target_rot = Rotation.from_rotvec(angle_axis).as_matrix() @ robot_origin_T[:3, :3]
 
