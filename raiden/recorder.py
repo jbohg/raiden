@@ -750,6 +750,11 @@ def run_recording(
     def emergency_stop(signum, frame):
         if _active_ctrl[0] is not None:
             _active_ctrl[0].emergency_stop()
+        else:
+            # No active controller (between episodes) — exit immediately.
+            print("\nCancelled.")
+            import os as _os
+            _os._exit(0)
 
     signal.signal(signal.SIGTERM, emergency_stop)
     signal.signal(signal.SIGINT, emergency_stop)
@@ -801,7 +806,11 @@ def run_recording(
             print("=" * 60)
             print(f"\n  Data dir   : {task_dir}")
             if interface.waits_for_button_start:
-                print("\n  Press button on any leader arm or left pedal to START.")
+                start_hint = getattr(interface, "start_hint", None)
+                if start_hint:
+                    print(f"\n  {start_hint}")
+                else:
+                    print("\n  Press button on any leader arm or left pedal to START.")
             else:
                 print("\n  Press Enter or left pedal to START recording.")
             print("  Press 'q' to end session.\n")

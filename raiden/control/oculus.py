@@ -185,6 +185,10 @@ class OculusInterface(TeleopInterface):
         return True
 
     @property
+    def start_hint(self) -> str:
+        return "Press A button on the Oculus controller to START (then hold grip to move)."
+
+    @property
     def supports_verdict_button(self) -> bool:
         return True
 
