@@ -18,6 +18,7 @@ def build_interface(
     oculus_pos_action_gain: float = 1.0,
     oculus_rot_action_gain: float = 1.0,
     oculus_rmat_reorder: list | None = None,
+    oculus_swap_controllers: bool = False,
 ) -> TeleopInterface:
     """Construct the right TeleopInterface from CLI-style arguments."""
     if control == "spacemouse":
@@ -35,5 +36,6 @@ def build_interface(
             pos_action_gain=oculus_pos_action_gain,
             rot_action_gain=oculus_rot_action_gain,
             rmat_reorder=oculus_rmat_reorder,
+            swap_controllers=oculus_swap_controllers,
         )
     return YAMInterface()

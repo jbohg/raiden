@@ -31,12 +31,14 @@ class OculusInterface(TeleopInterface):
         pos_action_gain: float = 1.0,
         rot_action_gain: float = 1.0,
         rmat_reorder: list | None = None,
+        swap_controllers: bool = False,
     ):
         self._right_controller = right_controller
         self._spatial_coeff = spatial_coeff
         self._pos_action_gain = pos_action_gain
         self._rot_action_gain = rot_action_gain
         self._rmat_reorder = rmat_reorder if rmat_reorder is not None else [-2, -1, -3, 4]
+        self._swap_controllers = swap_controllers
 
     @property
     def name(self) -> str:
@@ -141,6 +143,7 @@ class OculusInterface(TeleopInterface):
             pos_action_gain=self._pos_action_gain,
             rot_action_gain=self._rot_action_gain,
             rmat_reorder=self._rmat_reorder,
+            swap_controllers=self._swap_controllers,
         )
 
     def stop(self, robot_controller) -> None:

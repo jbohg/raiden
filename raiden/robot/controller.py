@@ -1298,6 +1298,7 @@ class RobotController:
         rot_action_gain: float = 1.0,
         rmat_reorder: Optional[list] = None,
         dt: float = 0.02,
+        swap_controllers: bool = False,
     ) -> None:
         """Start Oculus Quest Touch controller Cartesian teleop thread.
 
@@ -1327,11 +1328,14 @@ class RobotController:
 
         # Single-arm: right controller → left arm.
         # Bimanual: right controller → left arm, left controller → right arm.
+        # swap_controllers reverses the ctrl_id assignment.
         arms = []
         if self.follower_l is not None:
-            arms.append(("left", self.follower_l, "r", "oculus-left"))
+            ctrl = "l" if swap_controllers else "r"
+            arms.append(("left", self.follower_l, ctrl, "oculus-left"))
         if self.follower_r is not None:
-            arms.append(("right", self.follower_r, "l", "oculus-right"))
+            ctrl = "r" if swap_controllers else "l"
+            arms.append(("right", self.follower_r, ctrl, "oculus-right"))
 
         for side, follower, ctrl_id, thread_name in arms:
             t = threading.Thread(

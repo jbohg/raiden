@@ -70,6 +70,9 @@ class TeleopCommand:
     oculus_rmat_reorder: List[int] = field(default_factory=lambda: [-2, -1, -3, 4])
     """Axis permutation/flip vector mapping VR frame to robot frame (oculus mode only)"""
 
+    oculus_swap_controllers: bool = False
+    """Swap which Touch controller drives which arm: right→right arm, left→left arm (oculus mode only)"""
+
     follower_home_pos: Optional[List[float]] = None
     """7-DOF home position [j1..j6, gripper] the arm parks at on exit (all modes)"""
 
@@ -122,6 +125,9 @@ class RecordCommand:
 
     oculus_rmat_reorder: List[int] = field(default_factory=lambda: [-2, -1, -3, 4])
     """Axis permutation/flip vector mapping VR frame to robot frame (oculus mode only)"""
+
+    oculus_swap_controllers: bool = False
+    """Swap which Touch controller drives which arm: right→right arm, left→left arm (oculus mode only)"""
 
     follower_home_pos: Optional[List[float]] = None
     """7-DOF home position [j1..j6, gripper] the arm parks at on exit (all modes)"""
@@ -496,6 +502,7 @@ def main():
                 oculus_pos_action_gain=command.oculus_pos_action_gain,
                 oculus_rot_action_gain=command.oculus_rot_action_gain,
                 oculus_rmat_reorder=command.oculus_rmat_reorder,
+                oculus_swap_controllers=command.oculus_swap_controllers,
                 follower_home_pos=command.follower_home_pos,
             )  # teleop builds its own interface internally via build_interface()
 
@@ -525,6 +532,7 @@ def main():
                     oculus_pos_action_gain=command.oculus_pos_action_gain,
                     oculus_rot_action_gain=command.oculus_rot_action_gain,
                     oculus_rmat_reorder=command.oculus_rmat_reorder,
+                    oculus_swap_controllers=command.oculus_swap_controllers,
                 ),
                 arms=command.arms,
                 data_dir=command.data_dir,

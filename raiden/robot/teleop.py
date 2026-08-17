@@ -23,6 +23,7 @@ def run_bimanual_teleop(
     oculus_pos_action_gain: float = 1.0,
     oculus_rot_action_gain: float = 1.0,
     oculus_rmat_reorder: list | None = None,
+    oculus_swap_controllers: bool = False,
     follower_home_pos: list | None = None,
 ):
     """Run the bimanual teleoperation system"""
@@ -44,6 +45,7 @@ def run_bimanual_teleop(
         oculus_pos_action_gain=oculus_pos_action_gain,
         oculus_rot_action_gain=oculus_rot_action_gain,
         oculus_rmat_reorder=oculus_rmat_reorder,
+        oculus_swap_controllers=oculus_swap_controllers,
     )
 
     robot_controller = RobotController(
