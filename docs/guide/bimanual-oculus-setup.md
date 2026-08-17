@@ -62,14 +62,6 @@ ip link show        # find which can* appeared after plugging in one arm
 
 See [Hardware Setup](hardware.md#can-bus-setup) for the detailed procedure.
 
-### Install udev rules
-
-For the foot pedal soft E-stop:
-
-```bash
-sudo bash scripts/install_footpedal_udev.sh
-```
-
 ### Oculus Quest — enable ADB
 
 1. Enable Developer Mode on the Quest headset (via Meta Quest mobile app → Settings → Developer Mode).
