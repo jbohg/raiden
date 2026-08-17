@@ -1534,6 +1534,8 @@ class RobotController:
                 R_delta_vr = raw_pose[:3, :3] @ raw_pose_origin[:3, :3].T
                 R_rel = P_rot @ R_delta_vr @ P_rot.T
                 angle_axis = Rotation.from_matrix(R_rel).as_rotvec() * rot_action_gain
+                if flip_lateral:
+                    angle_axis *= -1
                 target_rot = Rotation.from_rotvec(angle_axis).as_matrix() @ robot_origin_T[:3, :3]
 
                 T_target = np.eye(4)
