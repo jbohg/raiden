@@ -1337,12 +1337,17 @@ class RobotController:
             ctrl = "r" if swap_controllers else "l"
             arms.append(("right", self.follower_r, ctrl, "oculus-right"))
 
+        # When facing the robot (default), the lateral (X) axis is mirrored
+        # relative to the user's frame and must be flipped. When standing
+        # behind (swap_controllers), the mapping is already correct.
+        flip_lateral = not swap_controllers
+
         for side, follower, ctrl_id, thread_name in arms:
             t = threading.Thread(
                 target=self._oculus_control_loop,
                 args=(side, follower, oculus_reader, ctrl_id,
                       spatial_coeff, pos_action_gain, rot_action_gain,
-                      global_to_env_mat, dt),
+                      global_to_env_mat, dt, flip_lateral),
                 name=thread_name,
                 daemon=True,
             )
@@ -1370,6 +1375,7 @@ class RobotController:
         rot_action_gain: float,
         global_to_env_mat: np.ndarray,
         dt: float,
+        flip_lateral: bool = False,
     ) -> None:
         """Absolute-pose origin-tracking + J-PARSE IK loop for one arm.
 
@@ -1512,6 +1518,8 @@ class RobotController:
 
                 # --- compute target EE pose ---
                 delta_pos = spatial_coeff * (vr_mat[:3, 3] - vr_origin_mat[:3, 3])
+                if flip_lateral:
+                    delta_pos[0] *= -1
                 target_pos = robot_origin_T[:3, 3] + pos_action_gain * delta_pos
 
                 # Compute R_rel in VR world frame (bypasses the vr_to_global body-frame
