@@ -2,6 +2,8 @@
 
 Step-by-step guide for setting up dual YAM arms with Oculus Quest teleop and camera recording. Assumes hardware is assembled and connected.
 
+**Tested on:** Ubuntu 24.04.4 LTS
+
 ---
 
 ## 1. One-time setup
