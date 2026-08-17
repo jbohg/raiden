@@ -1519,7 +1519,7 @@ class RobotController:
                 # --- compute target EE pose ---
                 delta_pos = spatial_coeff * (vr_mat[:3, 3] - vr_origin_mat[:3, 3])
                 if flip_lateral:
-                    delta_pos[0] *= -1
+                    delta_pos[1] *= -1
                 target_pos = robot_origin_T[:3, 3] + pos_action_gain * delta_pos
 
                 # Compute R_rel in VR world frame (bypasses the vr_to_global body-frame
